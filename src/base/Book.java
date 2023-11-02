@@ -1,6 +1,7 @@
 package base;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Book {
     private Long id;
@@ -59,5 +60,61 @@ public class Book {
 
     public void setPublishedDate(LocalDate publishedDate) {
         this.publishedDate = publishedDate;
+    }
+
+    @Override
+    public int hashCode() {
+//        return Objects.hash(name, author, isbn);
+        return this.name.hashCode() + this.author.hashCode() + (int)(long)this.isbn;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Book) {
+            Book book = (Book) obj;
+            if (this.getName().equals(book.getName())) {
+                if (this.getAuthor().equals(book.getAuthor())) {
+                    if (this.getIsbn().equals(book.getIsbn())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("[")
+            .append(getId())
+            .append(", ")
+            .append(getName())
+            .append(", ")
+            .append(getAuthor())
+            .append(", ")
+            .append(getIsbn())
+            .append(", ")
+            .append(getPublishedDate());
+
+        if (this instanceof EBook) {
+            sb.append(", ")
+                .append(((EBook) this).getFileSize())
+                .append("mb");
+        } else if (this instanceof AudioBook) {
+            sb.append(", ")
+                    .append(((AudioBook) this).getFileSize())
+                    .append("mb")
+                    .append(", ")
+                    .append(((AudioBook) this).getLanguage())
+                    .append(", ")
+                    .append(((AudioBook) this).getPlayTime())
+                    .append("초");
+        }
+
+        sb.append("]");
+        return sb.toString();
     }
 }

@@ -37,4 +37,22 @@ public class AudioBook extends Book {
     public void setPlayTime(int playTime) {
         this.playTime = playTime;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AudioBook) {
+            Book book = (Book) obj;
+            if (this.getName().equals(book.getName()) &&
+                    this.getAuthor().equals(book.getAuthor()) &&
+                    this.getIsbn().equals(book.getIsbn())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
