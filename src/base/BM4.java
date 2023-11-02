@@ -19,16 +19,30 @@ public class BM4 implements BookManageable {
         bookList.put(1L, new Book(1L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
         bookList.put(2L, new Book(2L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
         bookList.put(3L, new Book(3L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
-        bookList.put(6L, new Book(1L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
-        bookList.put(7L, new Book(2L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
-        bookList.put(8L, new Book(3L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
+        bookList.put(6L, new Book(6L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
+        bookList.put(7L, new Book(7L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
+        bookList.put(8L, new Book(8L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
         bookList.put(4L, new EBook(4L,
                 "진짜 쓰는 실무 엑셀",
                 "오빠두(전진권)",
                 Long.parseLong("9791192469454"),
                 LocalDate.parse("2022-09-27"),
                 "122.11"));
+        bookList.put(9L, new EBook(9L,
+                "진짜 쓰는 실무 엑셀",
+                "오빠두(전진권)",
+                Long.parseLong("9791192469454"),
+                LocalDate.parse("2022-09-27"),
+                "122.11"));
         bookList.put(5L, new AudioBook(5L,
+                "이솝 & 세계 명작 동화",
+                "서울미디어",
+                Long.parseLong("8804678148796"),
+                LocalDate.parse("2015-06-09"),
+                "210.18",
+                "한국어",
+                Integer.parseInt("2376")));
+        bookList.put(10L, new AudioBook(10L,
                 "이솝 & 세계 명작 동화",
                 "서울미디어",
                 Long.parseLong("8804678148796"),
@@ -121,28 +135,38 @@ public class BM4 implements BookManageable {
 
     private void printDuplicated() {
 
-        HashSet<Book> distinctBooks = new HashSet<>();
+        // HashMap 역으로 집어넣고
+
+        HashMap<Book, Long> keyValReversingMap = new HashMap<>();
 
         Set<Map.Entry<Long, Book>> entrySet = bookList.entrySet();
         Iterator<Map.Entry<Long, Book>> it = entrySet.iterator();
 
         while (it.hasNext()) {
-            distinctBooks.add(it.next().getValue());
+            Map.Entry<Long, Book> temp = it.next();
+            keyValReversingMap.put(temp.getValue(), temp.getKey());
         }
 
-        for (Book book: distinctBooks) {
-            System.out.println(book);
+        Collection<Long> originKey = new HashSet<>(bookList.keySet());
+        Collection<Long> newKey = keyValReversingMap.values();
+
+        originKey.removeAll(newKey);
+
+        System.out.println("중복된 책 목록");
+        int count = 0;
+        for (Long key : originKey) {
+            System.out.println("-------------" + ++count + "-------------");
+            Book book = bookList.get(key);
+            System.out.println(bookList.get(key));
+
+            System.out.println(bookList.get(keyValReversingMap.get(book)));
+            System.out.println();
         }
+        System.out.println("중복 책 권수 : " + count * 2 );
     }
 
     private void printAllByPublishedDate() {
-        HashMap<Long, Book> orderedBookList;
-//        for (Book book : bookList) {
-//            orderedBookList.add(book);
-//        }
-
-        orderedBookList = (HashMap<Long, Book>) bookList.clone();
-
+        ArrayList<Book> orderedBookList = new ArrayList<>(bookList.values());
         Collections.sort((List)orderedBookList, (book1, book2) ->
                 ((Book)book1).getPublishedDate().compareTo(((Book)book2).getPublishedDate()));
         booksToScreen(orderedBookList);
@@ -184,14 +208,7 @@ public class BM4 implements BookManageable {
     }
 
     private void printAllByBookNameOrder() {
-        HashMap<Long, Book> orderedBookList;
-        // Collections.copy(orderedBookList, bookList);
-//        for (Book book : bookList) {
-//            orderedBookList.add(book);
-//        }
-//        orderedBookList = (ArrayList<Book>) bookList.clone();
-        orderedBookList = bookList;
-
+        ArrayList<Book> orderedBookList = new ArrayList<>(bookList.values());
         Collections.sort((List)orderedBookList, (book1, book2) ->
                 ((Book)book1).getName().compareTo(((Book)book2).getName()));
         booksToScreen(orderedBookList);
@@ -204,6 +221,12 @@ public class BM4 implements BookManageable {
         while (it.hasNext()) {
             Map.Entry<Long, Book> next = it.next();
             System.out.println(next.getValue());
+        }
+    }
+
+    void booksToScreen(ArrayList<Book> bookList) {
+        for (Book book : bookList) {
+            System.out.println(book);
         }
     }
 
