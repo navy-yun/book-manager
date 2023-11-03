@@ -1,7 +1,6 @@
-package base;
+package base.book;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 public class EBook extends Book {
     String fileSize;

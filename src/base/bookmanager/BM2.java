@@ -1,20 +1,42 @@
-package base;
+package base.bookmanager;
+
+import base.book.AudioBook;
+import base.book.Book;
+import base.book.EBook;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 // BookManager를 구현하는 구현 객체
-public class BM extends BookManager {
+public class BM2 extends BookManager {
 
     private ArrayList<Book> bookList = new ArrayList<>();
     static Scanner sc = new Scanner(System.in);
+
+    static final String BOOK = "1";
+    static final String EBOOK = "2";
+    static final String AUDIOBOOK = "3";
 
     @Override
     void init() {
         bookList.add(new Book(1L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
         bookList.add(new Book(2L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
         bookList.add(new Book(3L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
+        bookList.add(new EBook(4L,
+                "진짜 쓰는 실무 엑셀",
+                "오빠두(전진권)",
+                Long.parseLong("9791192469454"),
+                LocalDate.parse("2022-09-27"),
+                "122.11"));
+        bookList.add(new AudioBook(5L,
+                "이솝 & 세계 명작 동화",
+                "서울미디어",
+                Long.parseLong("8804678148796"),
+                LocalDate.parse("2015-06-09"),
+                "210.18",
+                "한국어",
+                Integer.parseInt("2376")));
     }
 
     @Override
@@ -57,14 +79,17 @@ public class BM extends BookManager {
 
     @Override
     public void addBook() {
-        System.out.println("등록 메서드 실행");
-        // 1. 콘솔화면을 통해 사용자로부터 도서정보를 입력을 받는다.
-        // id, 제목, 저자, isbn, 출판일 (5가지) (v)
-        // 위의 정보로 책 객체를 생성한다. (v)
-        // 2. 도서를 등록한다.
-        // 사서를 통해 도서 저장 요청
 
-        String[] bookInfo = new String[5];
+        Book book;
+
+        System.out.println("등록할 책의 종류를 선택해주세요.");
+        System.out.println("(1)Book");
+        System.out.println("(2)EBook");
+        System.out.println("(3)AudioBook");
+        System.out.print(">> ");
+        String bookType = sc.nextLine();
+
+        String[] bookInfo = new String[10];
         System.out.print("id: ");
         bookInfo[0] = sc.nextLine();
         System.out.print("제목: ");
@@ -76,12 +101,38 @@ public class BM extends BookManager {
         System.out.print("출판일(YYYY-MM-DD): ");
         bookInfo[4] = sc.nextLine();
 
-        // book을 저장소에 저장
-        Book book = new Book(Long.parseLong(bookInfo[0]),
-                bookInfo[1],
-                bookInfo[2],
-                Long.parseLong(bookInfo[3]),
-                LocalDate.parse(bookInfo[4]));
+        if (bookType.equals(EBOOK)) {
+            System.out.print("파일크기(mb): ");
+            bookInfo[5] = sc.nextLine();
+            book = new EBook(Long.parseLong(bookInfo[0]),
+                    bookInfo[1],
+                    bookInfo[2],
+                    Long.parseLong(bookInfo[3]),
+                    LocalDate.parse(bookInfo[4]),
+                    bookInfo[5]);
+        } else if (bookType.equals(AUDIOBOOK)) {
+            System.out.print("파일크기(mb): ");
+            bookInfo[5] = sc.nextLine();
+            System.out.print("재생언어: ");
+            bookInfo[6] = sc.nextLine();
+            System.out.print("재생시간(초): ");
+            bookInfo[7] = sc.nextLine();
+            book = new AudioBook(Long.parseLong(bookInfo[0]),
+                    bookInfo[1],
+                    bookInfo[2],
+                    Long.parseLong(bookInfo[3]),
+                    LocalDate.parse(bookInfo[4]),
+                    bookInfo[5],
+                    bookInfo[6],
+                    Integer.parseInt(bookInfo[7]));
+        } else {
+             book = new Book(Long.parseLong(bookInfo[0]),
+                    bookInfo[1],
+                    bookInfo[2],
+                    Long.parseLong(bookInfo[3]),
+                    LocalDate.parse(bookInfo[4]));
+        }
+
         bookList.add(book);
     }
 
@@ -98,8 +149,22 @@ public class BM extends BookManager {
             System.out.print(book.getIsbn());
             System.out.print(", ");
             System.out.print(book.getPublishedDate());
+
+            if (book instanceof EBook) {
+                System.out.print(", ");
+                System.out.print(((EBook) book).getFileSize() + "mb");
+            } else if (book instanceof AudioBook) {
+                System.out.print(", ");
+                System.out.print(((AudioBook) book).getFileSize() + "mb");
+                System.out.print(", ");
+                System.out.print(((AudioBook) book).getLanguage());
+                System.out.print(", ");
+                System.out.print(((AudioBook) book).getPlayTime() + "초");
+            }
+
             System.out.print("]");
             System.out.println();
+
         }
     }
 
@@ -124,7 +189,7 @@ public class BM extends BookManager {
             return;
         }
         // 책이 존재할 때
-        String[] bookInfo = new String[5];
+        String[] bookInfo = new String[10];
         bookInfo[0] = id;
         System.out.println("[수정 정보를 입력해주세요]");
         System.out.print("제목: ");
@@ -135,6 +200,22 @@ public class BM extends BookManager {
         bookInfo[3] = sc.nextLine();
         System.out.print("출판일(YYYY-MM-DD): ");
         bookInfo[4] = sc.nextLine();
+
+        if (book instanceof EBook) {
+            System.out.print("파일크기(mb): ");
+            bookInfo[5] = sc.nextLine();
+            ((EBook) book).setFileSize(bookInfo[5]);
+        } else if (book instanceof AudioBook) {
+            System.out.print("파일크기(mb): ");
+            bookInfo[5] = sc.nextLine();
+            System.out.print("재생언어: ");
+            bookInfo[6] = sc.nextLine();
+            System.out.print("재생시간(초): ");
+            bookInfo[7] = sc.nextLine();
+            ((AudioBook) book).setFileSize(bookInfo[5]);
+            ((AudioBook) book).setLanguage(bookInfo[6]);
+            ((AudioBook) book).setPlayTime(Integer.parseInt(bookInfo[7]));
+        }
 
         book.setName(bookInfo[1]);
         book.setAuthor(bookInfo[2]);

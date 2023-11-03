@@ -1,17 +1,17 @@
-package base;
+package base.bookmanager;
 
+import base.book.AudioBook;
+import base.book.Book;
+import base.book.EBook;
 import base.repository.BookRepository;
-import base.repository.MapRepo;
+import base.repository.ListRepo;
 
 import java.time.LocalDate;
 import java.util.*;
 
-// BookManager를 구현하는 구현 객체
 public class BM5 implements BookManageable {
 
-//    private ArrayList<Book> bookList = new ArrayList<>();
-//    private HashMap<Long, Book> bookList = new HashMap<>();
-    BookRepository books = new MapRepo();
+    BookRepository books = new ListRepo();
 
     static Scanner sc = new Scanner(System.in);
 
@@ -72,23 +72,18 @@ public class BM5 implements BookManageable {
 
                 switch (userInput) {
                     case "1":
-                        // 조회
                         menuForSearch();
                         break;
                     case "2":
-                        // 등록
                         addBook();
                         break;
                     case "3":
-                        // 수정
                         updateBook();
                         break;
                     case "4":
-                        // 삭제
                         removeBook();
                         break;
                     case "q":
-                        // 메소드를 종료
                         System.out.println("프로그램 종료!");
                         return;
                 }
@@ -188,16 +183,6 @@ public class BM5 implements BookManageable {
             books.getBooks((a, b) -> (a.getName().compareTo(b.getName()) > 0 ) ? 1 : -1)
         );
     }
-    void booksToScreen(HashMap<Long, Book> bookList) {
-
-        Set<Map.Entry<Long, Book>> entrySet = bookList.entrySet();
-        Iterator<Map.Entry<Long, Book>> it = entrySet.iterator();
-
-        while (it.hasNext()) {
-            Map.Entry<Long, Book> next = it.next();
-            System.out.println(next.getValue());
-        }
-    }
 
     void booksToScreen(List<Book> bookList) {
         for (Book book : bookList) {
@@ -281,20 +266,10 @@ public class BM5 implements BookManageable {
 
     @Override
     public void updateBook() {
-
-        System.out.println("수정 메서드 실행");
-        // 1. 수정할 도서를 찾는다. (사서는 알 수 있다.) (v)
-        // 있으면 수정 가능
-        // 없으면 수정 불가
-        // 2. 수정할 도서가 있을 때:
-        // 새로운 입력 값 : 사용자로부터 입력받는다.
-        // 도서 정보(필드)를 바꾼다.
-
         System.out.print("수정할 도서번호를 입력해주세요: ");
         String id = sc.nextLine();
         Book book = books.getBook(Long.parseLong(id));
 
-        // 책이 존재하지 않을 때
         if (book == null) {
             System.out.println("입력하신 책을 찾을 수 없습니다.");
             return;
@@ -336,12 +311,6 @@ public class BM5 implements BookManageable {
 
     @Override
     public void removeBook() throws Exception {
-        System.out.println("삭제 메서드 실행");
-        // 1. 삭제할 도서를 찾는다.
-        // 없으면 삭제 불가
-        // 있으면 삭제 가능
-        // 2. 삭제할 도서가 있다면
-        // 사서한테 도서 삭제 요청
         System.out.print("삭제할 도서번호를 입력해주세요: ");
         String id = sc.nextLine();
 

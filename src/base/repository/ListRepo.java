@@ -5,14 +5,14 @@ import base.book.Book;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class MapRepo implements BookRepository {
+public class ListRepo implements BookRepository {
 
     //    private ArrayList<Book> bookList = new ArrayList<>();
-    private HashMap<Long, Book> books = new HashMap<>();
+    private ArrayList<Book> books = new ArrayList<>();
 
     @Override
     public boolean addBook(Book book) {
-        if (books.put(book.getId(), book) != null) {
+        if (books.add(book) != false) {
             return true;
         }
         return false;
@@ -20,12 +20,12 @@ public class MapRepo implements BookRepository {
 
     @Override
     public Book getBook(Long id) {
-        return books.get(id);
+        return books.stream().filter(book -> book.getId().equals(id)).findAny().get();
     }
 
     @Override
     public List<Book> getBooks() {
-        List<Book> bookList = new ArrayList<>(books.values());
+        List<Book> bookList = new ArrayList<>(books);
         Collections.sort(bookList, (o1, o2) -> {
             if (o1.getId() >= o2.getId()) {
                 return 1;
@@ -39,7 +39,7 @@ public class MapRepo implements BookRepository {
     @Override
     public List<Book> getBooks(Predicate<Book> predicate) {
 
-        Object[] objArr = books.values().stream().filter(predicate).toArray();
+        Object[] objArr = books.stream().filter(predicate).toArray();
         Book[] bookArr = Arrays.copyOf(objArr, objArr.length, Book[].class);
 
         return Arrays.asList(bookArr);
@@ -47,7 +47,7 @@ public class MapRepo implements BookRepository {
 
     @Override
     public List<Book> getBooks(Comparator<Book> comparator) {
-        Object[] objArr = books.values().stream().sorted(comparator).toArray();
+        Object[] objArr = books.stream().sorted(comparator).toArray();
         Book[] bookArr = Arrays.copyOf(objArr, objArr.length, Book[].class);
 
         return Arrays.asList(bookArr);
@@ -62,7 +62,7 @@ public class MapRepo implements BookRepository {
 
     @Override
     public boolean setBook(Book book) {
-        if (books.put(book.getId(), book) != null) {
+        if (books.add(book) != false) {
             return true;
         }
         return false;
@@ -70,7 +70,7 @@ public class MapRepo implements BookRepository {
 
     @Override
     public boolean removeBook(Book book) {
-        if (books.remove(book.getId()) != null) {
+        if (books.remove(book) != false) {
             return true;
         };
         return false;

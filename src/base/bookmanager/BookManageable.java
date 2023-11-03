@@ -1,4 +1,4 @@
-package base;
+package base.bookmanager;
 
 public interface BookManageable {
     void init();

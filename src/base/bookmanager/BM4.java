@@ -1,12 +1,17 @@
-package base;
+package base.bookmanager;
+
+import base.book.AudioBook;
+import base.book.Book;
+import base.book.EBook;
 
 import java.time.LocalDate;
 import java.util.*;
 
 // BookManager를 구현하는 구현 객체
-public class BM3 implements BookManageable {
+public class BM4 implements BookManageable {
 
-    private ArrayList<Book> bookList = new ArrayList<>();
+//    private ArrayList<Book> bookList = new ArrayList<>();
+    private HashMap<Long, Book> bookList = new HashMap<>();
     static Scanner sc = new Scanner(System.in);
 
     static final String BOOK = "1";
@@ -15,16 +20,33 @@ public class BM3 implements BookManageable {
 
     @Override
     public void init() {
-        bookList.add(new Book(1L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
-        bookList.add(new Book(2L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
-        bookList.add(new Book(3L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
-        bookList.add(new EBook(4L,
+        bookList.put(1L, new Book(1L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
+        bookList.put(2L, new Book(2L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
+        bookList.put(3L, new Book(3L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
+        bookList.put(6L, new Book(6L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
+        bookList.put(7L, new Book(7L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
+        bookList.put(8L, new Book(8L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
+        bookList.put(4L, new EBook(4L,
                 "진짜 쓰는 실무 엑셀",
                 "오빠두(전진권)",
                 Long.parseLong("9791192469454"),
                 LocalDate.parse("2022-09-27"),
                 "122.11"));
-        bookList.add(new AudioBook(5L,
+        bookList.put(9L, new EBook(9L,
+                "진짜 쓰는 실무 엑셀",
+                "오빠두(전진권)",
+                Long.parseLong("9791192469454"),
+                LocalDate.parse("2022-09-27"),
+                "122.11"));
+        bookList.put(5L, new AudioBook(5L,
+                "이솝 & 세계 명작 동화",
+                "서울미디어",
+                Long.parseLong("8804678148796"),
+                LocalDate.parse("2015-06-09"),
+                "210.18",
+                "한국어",
+                Integer.parseInt("2376")));
+        bookList.put(10L, new AudioBook(10L,
                 "이솝 & 세계 명작 동화",
                 "서울미디어",
                 Long.parseLong("8804678148796"),
@@ -85,6 +107,7 @@ public class BM3 implements BookManageable {
             System.out.println("(3) 책 제목 사전순 조회");
             System.out.println("(4) 출간일 기간으로 조회");
             System.out.println("(5) 출간일순 조회");
+            System.out.println("(6) 중복 책 찾기");
             System.out.println("(q) 메뉴 나가기");
             System.out.print("선택 >> ");
 
@@ -105,28 +128,56 @@ public class BM3 implements BookManageable {
                 case "5":
                     printAllByPublishedDate();
                     break;
+                case "6":
+                    printDuplicated();
+                    break;
                 case "q":
                     return;
             }
         }
     }
 
+    private void printDuplicated() {
+
+        // HashMap 역으로 집어넣고
+
+        HashMap<Book, Long> keyValReversingMap = new HashMap<>();
+
+        Set<Map.Entry<Long, Book>> entrySet = bookList.entrySet();
+        Iterator<Map.Entry<Long, Book>> it = entrySet.iterator();
+
+        while (it.hasNext()) {
+            Map.Entry<Long, Book> temp = it.next();
+            keyValReversingMap.put(temp.getValue(), temp.getKey());
+        }
+
+        Collection<Long> originKey = new HashSet<>(bookList.keySet());
+        Collection<Long> newKey = keyValReversingMap.values();
+
+        originKey.removeAll(newKey);
+
+        System.out.println("중복된 책 목록");
+        int count = 0;
+        for (Long key : originKey) {
+            System.out.println("-------------" + ++count + "-------------");
+            Book book = bookList.get(key);
+            System.out.println(bookList.get(key));
+
+            System.out.println(bookList.get(keyValReversingMap.get(book)));
+            System.out.println();
+        }
+        System.out.println("중복 책 권수 : " + count * 2 );
+    }
+
     private void printAllByPublishedDate() {
-        ArrayList<Book> orderedBookList = new ArrayList<>();
-//        for (Book book : bookList) {
-//            orderedBookList.add(book);
-//        }
-
-        orderedBookList = (ArrayList<Book>) bookList.clone();
-
+        ArrayList<Book> orderedBookList = new ArrayList<>(bookList.values());
         Collections.sort((List)orderedBookList, (book1, book2) ->
                 ((Book)book1).getPublishedDate().compareTo(((Book)book2).getPublishedDate()));
         booksToScreen(orderedBookList);
-
     }
 
     private void printByPublishedPeriod() {
-        ArrayList<Book> listSelected = new ArrayList<>();
+        HashMap<Long, Book> listSelected = new HashMap<>();
 
         System.out.println("■■■■■■ 출판일 기간으로 조회 ■■■■■■");
         System.out.print("시작일(YYYY-MM-DD) >> ");
@@ -134,12 +185,23 @@ public class BM3 implements BookManageable {
         System.out.print("종료일(YYYY-MM-DD) >> ");
         LocalDate end = LocalDate.parse(sc.nextLine());
 
-        for (Book book : bookList) {
+        Set<Map.Entry<Long, Book>> entrySet = bookList.entrySet();
+        Iterator<Map.Entry<Long, Book>> it = entrySet.iterator();
+
+        while (it.hasNext()) {
+            Book book = it.next().getValue();
             if (book.getPublishedDate().isBefore(end) &&
                 book.getPublishedDate().isAfter(start)) {
-                listSelected.add(book);
+                listSelected.put(book.getId(), book);
             }
         }
+
+//        for (Book book : bookList) {
+//            if (book.getPublishedDate().isBefore(end) &&
+//                book.getPublishedDate().isAfter(start)) {
+//                listSelected.add(book);
+//            }
+//        }
 
         if (listSelected.size() > 0) {
             booksToScreen(listSelected);
@@ -150,59 +212,42 @@ public class BM3 implements BookManageable {
     }
 
     private void printAllByBookNameOrder() {
-        ArrayList<Book> orderedBookList = new ArrayList<>();
-        // Collections.copy(orderedBookList, bookList);
-//        for (Book book : bookList) {
-//            orderedBookList.add(book);
-//        }
-//        orderedBookList = (ArrayList<Book>) bookList.clone();
-        orderedBookList = bookList;
-
+        ArrayList<Book> orderedBookList = new ArrayList<>(bookList.values());
         Collections.sort((List)orderedBookList, (book1, book2) ->
                 ((Book)book1).getName().compareTo(((Book)book2).getName()));
         booksToScreen(orderedBookList);
     }
+    void booksToScreen(HashMap<Long, Book> bookList) {
+
+        Set<Map.Entry<Long, Book>> entrySet = bookList.entrySet();
+        Iterator<Map.Entry<Long, Book>> it = entrySet.iterator();
+
+        while (it.hasNext()) {
+            Map.Entry<Long, Book> next = it.next();
+            System.out.println(next.getValue());
+        }
+    }
+
     void booksToScreen(ArrayList<Book> bookList) {
         for (Book book : bookList) {
-            System.out.print("[");
-            System.out.print(book.getId());
-            System.out.print(", ");
-            System.out.print(book.getName());
-            System.out.print(", ");
-            System.out.print(book.getAuthor());
-            System.out.print(", ");
-            System.out.print(book.getIsbn());
-            System.out.print(", ");
-            System.out.print(book.getPublishedDate());
-
-            if (book instanceof EBook) {
-                System.out.print(", ");
-                System.out.print(((EBook) book).getFileSize() + "mb");
-            } else if (book instanceof AudioBook) {
-                System.out.print(", ");
-                System.out.print(((AudioBook) book).getFileSize() + "mb");
-                System.out.print(", ");
-                System.out.print(((AudioBook) book).getLanguage());
-                System.out.print(", ");
-                System.out.print(((AudioBook) book).getPlayTime() + "초");
-            }
-
-            System.out.print("]");
-            System.out.println();
-
+            System.out.println(book);
         }
     }
 
     private void printByBookName() {
-        ArrayList<Book> listSelected = new ArrayList<>();
+        HashMap<Long, Book> listSelected = new HashMap<>();
 
         System.out.println("■■■■■■ 책 제목으로 조회 ■■■■■■");
         System.out.print("제목 >> ");
         String bookName = sc.nextLine();
 
-        for (Book book : bookList) {
+        Set<Map.Entry<Long, Book>> entrySet = bookList.entrySet();
+        Iterator<Map.Entry<Long, Book>> it = entrySet.iterator();
+
+        while (it.hasNext()) {
+            Book book = it.next().getValue();
             if (book.getName().contains(bookName)) {
-                listSelected.add(book);
+                listSelected.put(book.getId(), book);
             }
         }
 
@@ -269,39 +314,12 @@ public class BM3 implements BookManageable {
                     LocalDate.parse(bookInfo[4]));
         }
 
-        bookList.add(book);
+        bookList.put(book.getId(), book);
     }
 
     @Override
     public void printAllBook() {
-        for (Book book : bookList) {
-            System.out.print("[");
-            System.out.print(book.getId());
-            System.out.print(", ");
-            System.out.print(book.getName());
-            System.out.print(", ");
-            System.out.print(book.getAuthor());
-            System.out.print(", ");
-            System.out.print(book.getIsbn());
-            System.out.print(", ");
-            System.out.print(book.getPublishedDate());
-
-            if (book instanceof EBook) {
-                System.out.print(", ");
-                System.out.print(((EBook) book).getFileSize() + "mb");
-            } else if (book instanceof AudioBook) {
-                System.out.print(", ");
-                System.out.print(((AudioBook) book).getFileSize() + "mb");
-                System.out.print(", ");
-                System.out.print(((AudioBook) book).getLanguage());
-                System.out.print(", ");
-                System.out.print(((AudioBook) book).getPlayTime() + "초");
-            }
-
-            System.out.print("]");
-            System.out.println();
-
-        }
+        booksToScreen(bookList);
     }
 
     @Override
@@ -378,7 +396,8 @@ public class BM3 implements BookManageable {
     }
 
     public Book findBook(long id) {
-        for (Book book : bookList) {
+
+        for (Book book : bookList.values()) {
             if (id == book.getId()) {
                 return book;
             }
