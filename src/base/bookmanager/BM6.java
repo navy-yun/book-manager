@@ -7,9 +7,12 @@ import base.repository.DataManager;
 import base.repository.MapDM;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
 
-public class BM5 implements BookManageable {
+public class BM6 implements BookManageable {
 
     DataManager books = new MapDM();
 
@@ -21,40 +24,7 @@ public class BM5 implements BookManageable {
 
     @Override
     public void init() {
-        books.addBook(new Book(1L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
-        books.addBook(new Book(2L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
-        books.addBook(new Book(3L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
-        books.addBook(new Book(6L, "돈의 속성(300쇄 리커버에디션)", "김승호", Long.parseLong("9791188331796"), LocalDate.parse("2020-06-15")));
-        books.addBook(new Book(7L,"K 배터리 레볼루션", "박순혁", Long.parseLong("9791191521221"), LocalDate.parse("2023-02-20")));
-        books.addBook(new Book(8L, "위기의 역사", "오건영", Long.parseLong("9791169850360"), LocalDate.parse("2023-07-19")));
-        books.addBook(new EBook(4L,
-                "진짜 쓰는 실무 엑셀",
-                "오빠두(전진권)",
-                Long.parseLong("9791192469454"),
-                LocalDate.parse("2022-09-27"),
-                "122.11"));
-        books.addBook(new EBook(9L,
-                "진짜 쓰는 실무 엑셀",
-                "오빠두(전진권)",
-                Long.parseLong("9791192469454"),
-                LocalDate.parse("2022-09-27"),
-                "122.11"));
-        books.addBook(new AudioBook(5L,
-                "이솝 & 세계 명작 동화",
-                "서울미디어",
-                Long.parseLong("8804678148796"),
-                LocalDate.parse("2015-06-09"),
-                "210.18",
-                "한국어",
-                Integer.parseInt("2376")));
-        books.addBook(new AudioBook(10L,
-                "이솝 & 세계 명작 동화",
-                "서울미디어",
-                Long.parseLong("8804678148796"),
-                LocalDate.parse("2015-06-09"),
-                "210.18",
-                "한국어",
-                Integer.parseInt("2376")));
+
     }
 
     @Override
