@@ -3,15 +3,15 @@ package base.bookmanager;
 import base.book.AudioBook;
 import base.book.Book;
 import base.book.EBook;
-import base.repository.DataManager;
-import base.repository.MapDM;
+import base.repository.BookRepository;
+import base.repository.MapRepository;
 
 import java.time.LocalDate;
 import java.util.*;
 
 public class BM5 implements BookManageable {
 
-    DataManager books = new MapDM();
+    BookRepository books = new MapRepository();
 
     static Scanner sc = new Scanner(System.in);
 

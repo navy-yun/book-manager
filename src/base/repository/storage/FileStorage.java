@@ -1,15 +1,19 @@
-package base.repository;
+package base.repository.storage;
 
 import base.book.AudioBook;
 import base.book.Book;
 import base.book.EBook;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileRepo implements BookRepository {
+public class FileStorage implements Storable {
 
     BufferedReader reader = null;
     BufferedWriter writer = null;
@@ -101,7 +105,13 @@ public class FileRepo implements BookRepository {
     }
 
     @Override
-    public void backUp(List<Book> books) {
-
+    public void backUp() {
+        try {
+            Path copied = Paths.get(url.substring(0, url.length() - 4) + ".backup.txt");
+            Path originalPath = new File(url).toPath();
+            Files.copy(originalPath, copied, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

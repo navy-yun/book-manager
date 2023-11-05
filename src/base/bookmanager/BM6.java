@@ -3,8 +3,8 @@ package base.bookmanager;
 import base.book.AudioBook;
 import base.book.Book;
 import base.book.EBook;
-import base.repository.DataManager;
-import base.repository.MapDM;
+import base.repository.BookRepository;
+import base.repository.MapRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class BM6 implements BookManageable {
 
-    DataManager books = new MapDM();
+    BookRepository books = new MapRepository();
 
     static Scanner sc = new Scanner(System.in);
 
@@ -226,7 +226,11 @@ public class BM6 implements BookManageable {
                     LocalDate.parse(bookInfo[4]));
         }
 
-        books.addBook(book);
+        if (books.addBook(book)) {
+            System.out.println("등록이 완료되었습니다...");
+        } else {
+            System.out.println("등록이 실패하였습니다...");
+        }
     }
 
     @Override
@@ -278,7 +282,11 @@ public class BM6 implements BookManageable {
         book.setIsbn(Long.parseLong(bookInfo[3]));
         book.setPublishedDate(LocalDate.parse(bookInfo[4]));
 
-        books.setBook(book);
+        if (books.setBook(book)) {
+            System.out.println("수정이 완료되었습니다...");
+        } else {
+            System.out.println("수정이 실패하였습니다...");
+        }
     }
 
     @Override
@@ -290,6 +298,11 @@ public class BM6 implements BookManageable {
         if (book == null) {
             System.out.println("입력하신 책을 찾을 수 없습니다.");
         }
-        books.removeBook(book);
+        
+        if (books.removeBook(book)) {
+            System.out.println("삭제가 완료되었습니다...");
+        } else {
+            System.out.println("삭제가 실패하였습니다...");
+        }
     }
 }
